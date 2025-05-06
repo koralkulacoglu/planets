@@ -117,8 +117,6 @@ const Graph = () => {
           node.type === "sun"
             ? new THREE.MeshBasicMaterial({
                 map: textures.sun,
-                emissive: new THREE.Color("#FFD700"),
-                emissiveIntensity: 1,
               })
             : new THREE.MeshStandardMaterial({
                 map: node.type === "planet" ? textures.planet : textures.moon,
@@ -127,9 +125,13 @@ const Graph = () => {
         const mesh = new THREE.Mesh(geometry, material);
 
         const sprite = new SpriteText(node.label);
-        sprite.material.depthWrite = false;
-        sprite.color = "white";
         sprite.textHeight = 10;
+        sprite.color =
+          node.type === "sun"
+            ? "gold"
+            : node.type === "planet"
+            ? "lightblue"
+            : "gray";
 
         sprite.position.set(0, size + 10, 0);
         mesh.add(sprite);
