@@ -14,8 +14,8 @@ const data = {
       parentId: "about",
     },
     {
-      id: "skills",
-      label: "Skills",
+      id: "contact",
+      label: "Contact",
       type: "mars",
       color: "white",
       parentId: "about",
@@ -28,8 +28,8 @@ const data = {
       parentId: "about",
     },
     {
-      id: "contact",
-      label: "Contact",
+      id: "skills",
+      label: "Skills",
       type: "saturn",
       color: "white",
       parentId: "about",
@@ -160,6 +160,7 @@ const Graph = () => {
         const material = new THREE.MeshBasicMaterial({
           map: starfield,
           side: THREE.BackSide,
+          color: 0x555555,
         });
         const skybox = new THREE.Mesh(geometry, material);
         scene.add(skybox);
@@ -232,11 +233,13 @@ const Graph = () => {
       mesh.add(ringMesh);
     }
 
-    const sprite = new SpriteText(node.label);
-    sprite.textHeight = 10;
-    sprite.color = node.color;
-    sprite.position.set(0, size + 10, size + 10);
-    mesh.add(sprite);
+    if (node.type !== "moon") {
+      const sprite = new SpriteText(node.label);
+      sprite.textHeight = 10;
+      sprite.color = node.color;
+      sprite.position.set(0, size + 10);
+      mesh.add(sprite);
+    }
 
     return mesh;
   };
