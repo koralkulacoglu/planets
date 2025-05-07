@@ -73,6 +73,7 @@ const Graph = () => {
   const [isZooming, setIsZooming] = useState(false);
   const [textures, setTextures] = useState({});
   const orbitDistance = 300;
+  const nodeMeshes = useRef({});
 
   useEffect(() => {
     const loader = new THREE.TextureLoader();
@@ -108,6 +109,7 @@ const Graph = () => {
         venus_athmosphere,
         saturnRing,
       ] = await Promise.all(texturePromises);
+
       setTextures({
         sun,
         jupiter,
@@ -170,6 +172,16 @@ const Graph = () => {
     fgRef.current.controls().maxDistance = 5000;
   }, []);
 
+  useEffect(() => {
+    const animate = () => {
+      Object.values(nodeMeshes.current).forEach((mesh) => {
+        mesh.rotation.y += 0.005;
+      });
+      requestAnimationFrame(animate);
+    };
+    animate();
+  }, []);
+
   const getNodeMaterial = (node) => {
     const texture = textures[node.type];
     return texture
@@ -220,7 +232,6 @@ const Graph = () => {
     const sprite = new SpriteText(node.label);
     sprite.textHeight = node.type === "sun" ? 15 : 5;
     sprite.color = node.color;
-
     sprite.backgroundColor = "rgba(0, 0, 0, 0.6)";
     sprite.borderColor = node.color;
     sprite.borderWidth = 1;
@@ -228,6 +239,8 @@ const Graph = () => {
     sprite.position.set(0, size + (node.type === "sun" ? 15 : 8), 0);
 
     mesh.add(sprite);
+
+    nodeMeshes.current[node.id] = mesh;
 
     return mesh;
   };
