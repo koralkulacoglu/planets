@@ -14,15 +14,15 @@ const data = {
       parentId: "about",
     },
     {
-      id: "contact",
-      label: "contact",
+      id: "employment",
+      label: "employment",
       type: "mars",
       color: "white",
       parentId: "about",
     },
     {
-      id: "employment",
-      label: "employment",
+      id: "contact",
+      label: "contact",
       type: "earth",
       color: "white",
       parentId: "about",
@@ -42,60 +42,18 @@ const data = {
       parentId: "about",
     },
     {
-      id: "resume",
-      label: "resume",
+      id: "secret",
+      label: "secret",
       type: "neptune",
       color: "white",
       parentId: "about",
     },
     {
-      id: "Admini",
-      label: "Admini",
+      id: "resume",
+      label: "resume",
       type: "moon",
       color: "gray",
       parentId: "projects",
-    },
-    {
-      id: "FourSight",
-      label: "FourSight",
-      type: "moon",
-      color: "gray",
-      parentId: "projects",
-    },
-    {
-      id: "React",
-      label: "React",
-      type: "moon",
-      color: "gray",
-      parentId: "skills",
-    },
-    {
-      id: "AWS",
-      label: "AWS",
-      type: "moon",
-      color: "gray",
-      parentId: "skills",
-    },
-    {
-      id: "MIPS",
-      label: "MIPS Assembly",
-      type: "moon",
-      color: "gray",
-      parentId: "skills",
-    },
-    {
-      id: "AdminiRole",
-      label: "Lead @ Admini",
-      type: "moon",
-      color: "gray",
-      parentId: "employment",
-    },
-    {
-      id: "Email",
-      label: "Email",
-      type: "moon",
-      color: "gray",
-      parentId: "contact",
     },
   ],
   links: [
@@ -104,14 +62,8 @@ const data = {
     { source: "about", target: "employment" },
     { source: "about", target: "contact" },
     { source: "about", target: "education" },
-    { source: "about", target: "resume" },
-    { source: "projects", target: "Admini" },
-    { source: "projects", target: "FourSight" },
-    { source: "skills", target: "React" },
-    { source: "skills", target: "AWS" },
-    { source: "skills", target: "MIPS" },
-    { source: "employment", target: "AdminiRole" },
-    { source: "contact", target: "Email" },
+    { source: "about", target: "secret" },
+    { source: "contact", target: "resume" },
   ],
 };
 
@@ -214,7 +166,6 @@ const Graph = () => {
   }, [isZooming]);
 
   const getNodeMaterial = (node) => {
-    const size = node.type === "sun" ? 14 : node.type === "moon" ? 6 : 10;
     const texture = textures[node.type];
     return texture
       ? new THREE.MeshStandardMaterial({ map: texture })
@@ -261,13 +212,11 @@ const Graph = () => {
       mesh.add(ringMesh);
     }
 
-    if (node.type !== "moon") {
-      const sprite = new SpriteText(node.label);
-      sprite.textHeight = 10;
-      sprite.color = node.color;
-      sprite.position.set(0, size + 10);
-      mesh.add(sprite);
-    }
+    const sprite = new SpriteText(node.label);
+    sprite.textHeight = 10;
+    sprite.color = node.color;
+    sprite.position.set(0, size + 10);
+    mesh.add(sprite);
 
     return mesh;
   };
