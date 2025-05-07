@@ -167,6 +167,7 @@ const Graph = () => {
 
   useEffect(() => {
     fgRef.current.controls().noPan = true;
+    fgRef.current.controls().maxDistance = 5000;
   }, []);
 
   const getNodeMaterial = (node) => {
