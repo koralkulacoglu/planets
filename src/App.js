@@ -5,29 +5,91 @@ import SpriteText from "three-spritetext";
 
 const data = {
   nodes: [
-    { id: "about", label: "About Me", type: "sun" },
-    { id: "projects", label: "Projects", type: "planet", parentId: "about" },
-    { id: "skills", label: "Skills", type: "planet", parentId: "about" },
+    { id: "about", label: "About Me", type: "sun", color: "gold" },
+    {
+      id: "projects",
+      label: "Projects",
+      type: "jupiter",
+      color: "white",
+      parentId: "about",
+    },
+    {
+      id: "skills",
+      label: "Skills",
+      type: "mars",
+      color: "white",
+      parentId: "about",
+    },
     {
       id: "experience",
       label: "Experience",
-      type: "planet",
+      type: "earth",
+      color: "white",
       parentId: "about",
     },
-    { id: "contact", label: "Contact", type: "planet", parentId: "about" },
-    { id: "Admini", label: "Admini", type: "moon", parentId: "projects" },
-    { id: "FourSight", label: "FourSight", type: "moon", parentId: "projects" },
-    { id: "React", label: "React", type: "moon", parentId: "skills" },
-    { id: "AWS", label: "AWS", type: "moon", parentId: "skills" },
-    { id: "MIPS", label: "MIPS Assembly", type: "moon", parentId: "skills" },
+    {
+      id: "contact",
+      label: "Contact",
+      type: "saturn",
+      color: "white",
+      parentId: "about",
+    },
+    {
+      id: "Admini",
+      label: "Admini",
+      type: "moon",
+      color: "gray",
+      parentId: "projects",
+    },
+    {
+      id: "FourSight",
+      label: "FourSight",
+      type: "moon",
+      color: "gray",
+      parentId: "projects",
+    },
+    {
+      id: "React",
+      label: "React",
+      type: "moon",
+      color: "gray",
+      parentId: "skills",
+    },
+    {
+      id: "AWS",
+      label: "AWS",
+      type: "moon",
+      color: "gray",
+      parentId: "skills",
+    },
+    {
+      id: "MIPS",
+      label: "MIPS Assembly",
+      type: "moon",
+      color: "gray",
+      parentId: "skills",
+    },
     {
       id: "AdminiRole",
       label: "Lead @ Admini",
       type: "moon",
+      color: "gray",
       parentId: "experience",
     },
-    { id: "Resume", label: "Resume", type: "moon", parentId: "contact" },
-    { id: "Email", label: "Email", type: "moon", parentId: "contact" },
+    {
+      id: "Resume",
+      label: "Resume",
+      type: "moon",
+      color: "gray",
+      parentId: "contact",
+    },
+    {
+      id: "Email",
+      label: "Email",
+      type: "moon",
+      color: "gray",
+      parentId: "contact",
+    },
   ],
   links: [
     { source: "about", target: "projects" },
@@ -55,21 +117,41 @@ const Graph = () => {
   useEffect(() => {
     const loader = new THREE.TextureLoader();
     const loadTextures = async () => {
-      const [sun, planet, moon, starfield] = await Promise.all([
+      const [
+        sun,
+        jupiter,
+        earth,
+        mars,
+        saturn,
+        moon,
+        starfield,
+        earthClouds,
+        saturnRing,
+      ] = await Promise.all([
         loader.loadAsync("/textures/sun.jpg"),
-        loader.loadAsync("/textures/planet.jpg"),
+        loader.loadAsync("/textures/jupiter.jpg"),
+        loader.loadAsync("/textures/earth.jpg"),
+        loader.loadAsync("/textures/mars.jpg"),
+        loader.loadAsync("/textures/saturn.jpg"),
         loader.loadAsync("/textures/moon.jpg"),
         loader.loadAsync("/textures/starfield.jpg"),
+        loader.loadAsync("/textures/earth_clouds.jpg"),
+        loader.loadAsync("/textures/saturn_ring.png"),
       ]);
-      setTextures({ sun, planet, moon, starfield });
+      setTextures({
+        sun,
+        jupiter,
+        earth,
+        mars,
+        saturn,
+        moon,
+        starfield,
+        earthClouds,
+        saturnRing,
+      });
 
       const scene = fgRef.current.scene();
       scene.background = starfield;
-
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-      const pointLight = new THREE.PointLight(0xffffff, 1);
-      pointLight.position.set(100, 100, 100);
-      scene.add(ambientLight, pointLight);
     };
 
     loadTextures();
@@ -108,31 +190,44 @@ const Graph = () => {
       backgroundColor="black"
       enableNodeDrag={false}
       nodeThreeObject={(node) => {
-        if (!textures.sun) return null; // wait until textures are loaded
-
-        const size = node.type === "sun" ? 14 : node.type === "planet" ? 10 : 6;
+        const size = node.type === "sun" ? 14 : node.type === "moon" ? 6 : 10;
         const geometry = new THREE.SphereGeometry(size, 32, 32);
 
-        const material =
-          node.type === "sun"
-            ? new THREE.MeshBasicMaterial({
-                map: textures.sun,
-              })
-            : new THREE.MeshStandardMaterial({
-                map: node.type === "planet" ? textures.planet : textures.moon,
-              });
+        const texture = textures[node.type];
+        const material = texture
+          ? new THREE.MeshStandardMaterial({ map: texture })
+          : new THREE.MeshStandardMaterial({ color: node.color });
 
         const mesh = new THREE.Mesh(geometry, material);
 
+        if (node.type === "earth" && textures.earthClouds) {
+          const cloudGeometry = new THREE.SphereGeometry(size * 1.01, 32, 32);
+          const cloudMaterial = new THREE.MeshStandardMaterial({
+            map: textures.earthClouds,
+            transparent: true,
+            opacity: 0.3,
+          });
+          const cloudMesh = new THREE.Mesh(cloudGeometry, cloudMaterial);
+          mesh.add(cloudMesh);
+        }
+
+        if (node.type === "saturn" && textures.saturnRing) {
+          const ringGeo = new THREE.RingGeometry(size * 1.4, size * 2.2, 64);
+          const ringMat = new THREE.MeshBasicMaterial({
+            map: textures.saturnRing,
+            side: THREE.DoubleSide,
+            transparent: true,
+          });
+          const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+          ringMesh.rotation.x = Math.PI / 2;
+          ringMesh.rotation.y = 0.5;
+          ringMesh.rotation.z = 0.5;
+          mesh.add(ringMesh);
+        }
+
         const sprite = new SpriteText(node.label);
         sprite.textHeight = 10;
-        sprite.color =
-          node.type === "sun"
-            ? "gold"
-            : node.type === "planet"
-            ? "lightblue"
-            : "gray";
-
+        sprite.color = node.color;
         sprite.position.set(0, size + 10, 0);
         mesh.add(sprite);
 
