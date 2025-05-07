@@ -5,7 +5,7 @@ import SpriteText from "three-spritetext";
 
 const data = {
   nodes: [
-    { id: "about", label: "Koral", type: "sun", color: "gold" },
+    { id: "about", label: "Koral", type: "sun", color: "orange" },
     {
       id: "projects",
       label: "projects",
@@ -37,7 +37,14 @@ const data = {
     {
       id: "education",
       label: "education",
-      type: "uranus",
+      type: "venus",
+      color: "white",
+      parentId: "about",
+    },
+    {
+      id: "resume",
+      label: "resume",
+      type: "neptune",
       color: "white",
       parentId: "about",
     },
@@ -84,13 +91,6 @@ const data = {
       parentId: "employment",
     },
     {
-      id: "Resume",
-      label: "Resume",
-      type: "moon",
-      color: "gray",
-      parentId: "contact",
-    },
-    {
       id: "Email",
       label: "Email",
       type: "moon",
@@ -104,13 +104,13 @@ const data = {
     { source: "about", target: "employment" },
     { source: "about", target: "contact" },
     { source: "about", target: "education" },
+    { source: "about", target: "resume" },
     { source: "projects", target: "Admini" },
     { source: "projects", target: "FourSight" },
     { source: "skills", target: "React" },
     { source: "skills", target: "AWS" },
     { source: "skills", target: "MIPS" },
     { source: "employment", target: "AdminiRole" },
-    { source: "contact", target: "Resume" },
     { source: "contact", target: "Email" },
   ],
 };
@@ -131,10 +131,12 @@ const Graph = () => {
         "earth.jpg",
         "mars.jpg",
         "saturn.jpg",
-        "uranus.jpg",
+        "venus.jpg",
+        "neptune.jpg",
         "moon.jpg",
         "starfield.jpg",
         "earth_clouds.jpg",
+        "venus_athmosphere.jpg",
         "saturn_ring.png",
       ];
       const texturePromises = textureNames.map((name) =>
@@ -146,10 +148,12 @@ const Graph = () => {
         earth,
         mars,
         saturn,
-        uranus,
+        venus,
+        neptune,
         moon,
         starfield,
         earthClouds,
+        venus_athmosphere,
         saturnRing,
       ] = await Promise.all(texturePromises);
       setTextures({
@@ -158,10 +162,12 @@ const Graph = () => {
         earth,
         mars,
         saturn,
-        uranus,
+        venus,
+        neptune,
         moon,
         starfield,
         earthClouds,
+        venus_athmosphere,
         saturnRing,
       });
 
@@ -227,6 +233,17 @@ const Graph = () => {
         map: textures.earthClouds,
         transparent: true,
         opacity: 0.3,
+      });
+      const cloudMesh = new THREE.Mesh(cloudGeometry, cloudMaterial);
+      mesh.add(cloudMesh);
+    }
+
+    if (node.type === "venus" && textures.venus_athmosphere) {
+      const cloudGeometry = new THREE.SphereGeometry(size * 1.01, 32, 32);
+      const cloudMaterial = new THREE.MeshStandardMaterial({
+        map: textures.venus_athmosphere,
+        transparent: true,
+        opacity: 0.9,
       });
       const cloudMesh = new THREE.Mesh(cloudGeometry, cloudMaterial);
       mesh.add(cloudMesh);
