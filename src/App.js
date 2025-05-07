@@ -8,49 +8,49 @@ const data = {
     { id: "about", label: "Koral", type: "sun", color: "orange" },
     {
       id: "projects",
-      label: "projects",
+      label: "Projects",
       type: "jupiter",
       color: "white",
       parentId: "about",
     },
     {
       id: "employment",
-      label: "employment",
+      label: "Employment",
       type: "mars",
-      color: "white",
+      color: "pink",
       parentId: "about",
     },
     {
       id: "contact",
-      label: "contact",
+      label: "Contact",
       type: "earth",
-      color: "white",
+      color: "lightgreen",
       parentId: "about",
     },
     {
       id: "skills",
-      label: "skills",
+      label: "Skills",
       type: "saturn",
-      color: "white",
+      color: "beige",
       parentId: "about",
     },
     {
       id: "education",
-      label: "education",
+      label: "Education",
       type: "venus",
-      color: "white",
+      color: "tan",
       parentId: "about",
     },
     {
       id: "secret",
-      label: "secret",
+      label: "Secret",
       type: "neptune",
-      color: "white",
+      color: "lightblue",
       parentId: "about",
     },
     {
       id: "resume",
-      label: "resume",
+      label: "Resume",
       type: "moon",
       color: "gray",
       parentId: "projects",
@@ -213,9 +213,15 @@ const Graph = () => {
     }
 
     const sprite = new SpriteText(node.label);
-    sprite.textHeight = 10;
+    sprite.textHeight = node.type === "sun" ? 15 : 5;
     sprite.color = node.color;
-    sprite.position.set(0, size + 10);
+
+    sprite.backgroundColor = "rgba(0, 0, 0, 0.6)";
+    sprite.borderColor = node.color;
+    sprite.borderWidth = 1;
+    sprite.padding = 2;
+    sprite.position.set(0, size + (node.type === "sun" ? 15 : 8), 0);
+
     mesh.add(sprite);
 
     return mesh;
