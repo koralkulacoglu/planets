@@ -165,6 +165,10 @@ const Graph = () => {
     };
   }, [isZooming]);
 
+  useEffect(() => {
+    fgRef.current.controls().noPan = true;
+  }, []);
+
   const getNodeMaterial = (node) => {
     const texture = textures[node.type];
     return texture
