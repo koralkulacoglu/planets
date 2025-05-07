@@ -117,6 +117,20 @@ const Graph = () => {
   useEffect(() => {
     const loader = new THREE.TextureLoader();
     const loadTextures = async () => {
+      const textureNames = [
+        "sun.jpg",
+        "jupiter.jpg",
+        "earth.jpg",
+        "mars.jpg",
+        "saturn.jpg",
+        "moon.jpg",
+        "starfield.jpg",
+        "earth_clouds.jpg",
+        "saturn_ring.png",
+      ];
+      const texturePromises = textureNames.map((name) =>
+        loader.loadAsync(`/textures/${name}`)
+      );
       const [
         sun,
         jupiter,
@@ -127,17 +141,7 @@ const Graph = () => {
         starfield,
         earthClouds,
         saturnRing,
-      ] = await Promise.all([
-        loader.loadAsync("/textures/sun.jpg"),
-        loader.loadAsync("/textures/jupiter.jpg"),
-        loader.loadAsync("/textures/earth.jpg"),
-        loader.loadAsync("/textures/mars.jpg"),
-        loader.loadAsync("/textures/saturn.jpg"),
-        loader.loadAsync("/textures/moon.jpg"),
-        loader.loadAsync("/textures/starfield.jpg"),
-        loader.loadAsync("/textures/earth_clouds.jpg"),
-        loader.loadAsync("/textures/saturn_ring.png"),
-      ]);
+      ] = await Promise.all(texturePromises);
       setTextures({
         sun,
         jupiter,
@@ -150,8 +154,16 @@ const Graph = () => {
         saturnRing,
       });
 
-      const scene = fgRef.current.scene();
-      scene.background = starfield;
+      const scene = fgRef.current?.scene();
+      if (scene && starfield) {
+        const geometry = new THREE.SphereGeometry(10000, 64, 64);
+        const material = new THREE.MeshBasicMaterial({
+          map: starfield,
+          side: THREE.BackSide,
+        });
+        const skybox = new THREE.Mesh(geometry, material);
+        scene.add(skybox);
+      }
     };
 
     loadTextures();
@@ -183,56 +195,59 @@ const Graph = () => {
     };
   }, [isZooming]);
 
+  const getNodeMaterial = (node) => {
+    const size = node.type === "sun" ? 14 : node.type === "moon" ? 6 : 10;
+    const texture = textures[node.type];
+    return texture
+      ? new THREE.MeshStandardMaterial({ map: texture })
+      : new THREE.MeshStandardMaterial({ color: node.color });
+  };
+
+  const createNodeMesh = (node) => {
+    const size = node.type === "sun" ? 14 : node.type === "moon" ? 6 : 10;
+    const geometry = new THREE.SphereGeometry(size, 32, 32);
+    const material = getNodeMaterial(node);
+    const mesh = new THREE.Mesh(geometry, material);
+
+    if (node.type === "earth" && textures.earthClouds) {
+      const cloudGeometry = new THREE.SphereGeometry(size * 1.01, 32, 32);
+      const cloudMaterial = new THREE.MeshStandardMaterial({
+        map: textures.earthClouds,
+        transparent: true,
+        opacity: 0.3,
+      });
+      const cloudMesh = new THREE.Mesh(cloudGeometry, cloudMaterial);
+      mesh.add(cloudMesh);
+    }
+
+    if (node.type === "saturn" && textures.saturnRing) {
+      const ringGeo = new THREE.RingGeometry(size * 1.4, size * 2.2, 64);
+      const ringMat = new THREE.MeshBasicMaterial({
+        map: textures.saturnRing,
+        side: THREE.DoubleSide,
+        transparent: true,
+      });
+      const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+      ringMesh.rotation.set(Math.PI / 2, 0.5, 0.5);
+      mesh.add(ringMesh);
+    }
+
+    const sprite = new SpriteText(node.label);
+    sprite.textHeight = 10;
+    sprite.color = node.color;
+    sprite.position.set(0, size + 10, size + 10);
+    mesh.add(sprite);
+
+    return mesh;
+  };
+
   return (
     <ForceGraph3D
       ref={fgRef}
       graphData={data}
       backgroundColor="black"
       enableNodeDrag={false}
-      nodeThreeObject={(node) => {
-        const size = node.type === "sun" ? 14 : node.type === "moon" ? 6 : 10;
-        const geometry = new THREE.SphereGeometry(size, 32, 32);
-
-        const texture = textures[node.type];
-        const material = texture
-          ? new THREE.MeshStandardMaterial({ map: texture })
-          : new THREE.MeshStandardMaterial({ color: node.color });
-
-        const mesh = new THREE.Mesh(geometry, material);
-
-        if (node.type === "earth" && textures.earthClouds) {
-          const cloudGeometry = new THREE.SphereGeometry(size * 1.01, 32, 32);
-          const cloudMaterial = new THREE.MeshStandardMaterial({
-            map: textures.earthClouds,
-            transparent: true,
-            opacity: 0.3,
-          });
-          const cloudMesh = new THREE.Mesh(cloudGeometry, cloudMaterial);
-          mesh.add(cloudMesh);
-        }
-
-        if (node.type === "saturn" && textures.saturnRing) {
-          const ringGeo = new THREE.RingGeometry(size * 1.4, size * 2.2, 64);
-          const ringMat = new THREE.MeshBasicMaterial({
-            map: textures.saturnRing,
-            side: THREE.DoubleSide,
-            transparent: true,
-          });
-          const ringMesh = new THREE.Mesh(ringGeo, ringMat);
-          ringMesh.rotation.x = Math.PI / 2;
-          ringMesh.rotation.y = 0.5;
-          ringMesh.rotation.z = 0.5;
-          mesh.add(ringMesh);
-        }
-
-        const sprite = new SpriteText(node.label);
-        sprite.textHeight = 10;
-        sprite.color = node.color;
-        sprite.position.set(0, size + 10, 0);
-        mesh.add(sprite);
-
-        return mesh;
-      }}
+      nodeThreeObject={createNodeMesh}
       onNodeClick={(node) => {
         const dist = 40;
         const distRatio = 1 + dist / Math.hypot(node.x, node.y, node.z);
