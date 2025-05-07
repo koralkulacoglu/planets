@@ -230,6 +230,7 @@ const Graph = () => {
     }
 
     const sprite = new SpriteText(node.label);
+    sprite.fontFace = "Orbitron, sans-serif";
     sprite.textHeight = node.type === "sun" ? 15 : 5;
     sprite.color = node.color;
     sprite.backgroundColor = "rgba(0, 0, 0, 0.6)";
