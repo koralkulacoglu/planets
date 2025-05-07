@@ -232,7 +232,8 @@ const Graph = () => {
       ref={fgRef}
       graphData={data}
       backgroundColor="black"
-      enableNodeDrag={false}
+      enableNodeDrag={true}
+      showNavInfo={false}
       nodeThreeObject={createNodeMesh}
       onNodeClick={(node) => {
         const dist = 40;
