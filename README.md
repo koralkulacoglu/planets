@@ -1,6 +1,6 @@
 # Planets
 
-![Demo](https://i.ibb.co/FLydNtYC/planets.gif)
+![planets](https://github.com/user-attachments/assets/cae6a369-c060-41ab-abfe-9b573710e78c)
 
 ## Getting Started
 
