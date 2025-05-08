@@ -1,5 +1,7 @@
 # Planets
 
+![Demo](https://i.ibb.co/FLydNtYC/planets.gif)
+
 ## Getting Started
 
 To run the project locally:
@@ -43,7 +45,3 @@ The following textures are used in the project and are located in the `public/te
 - **Links**: Links define the parent-child relationships between celestial bodies.
 - **Camera Animation**: The camera orbits the scene unless user interaction is detected.
 - **Custom Meshes**: Nodes are rendered as 3D meshes with textures and additional features like rings and cloud layers.
-
-```
-
-```
