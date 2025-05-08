@@ -1,69 +1,26 @@
 import React, { useRef, useEffect, useState } from "react";
 import ForceGraph3D from "react-force-graph-3d";
 import * as THREE from "three";
-import SpriteText from "three-spritetext";
 
 const data = {
   nodes: [
-    { id: "about", label: "Koral", type: "sun", color: "orange" },
-    {
-      id: "projects",
-      label: "Projects",
-      type: "jupiter",
-      color: "white",
-      parentId: "about",
-    },
-    {
-      id: "employment",
-      label: "Employment",
-      type: "mars",
-      color: "pink",
-      parentId: "about",
-    },
-    {
-      id: "contact",
-      label: "Contact",
-      type: "earth",
-      color: "lightgreen",
-      parentId: "about",
-    },
-    {
-      id: "skills",
-      label: "Skills",
-      type: "saturn",
-      color: "beige",
-      parentId: "about",
-    },
-    {
-      id: "education",
-      label: "Education",
-      type: "venus",
-      color: "tan",
-      parentId: "about",
-    },
-    {
-      id: "secret",
-      label: "Secret",
-      type: "neptune",
-      color: "lightblue",
-      parentId: "about",
-    },
-    {
-      id: "resume",
-      label: "Resume",
-      type: "moon",
-      color: "gray",
-      parentId: "projects",
-    },
+    { id: "sun", color: "orange" },
+    { id: "jupiter", color: "white", parentId: "sun" },
+    { id: "mars", color: "pink", parentId: "sun" },
+    { id: "earth", color: "lightgreen", parentId: "sun" },
+    { id: "saturn", color: "beige", parentId: "sun" },
+    { id: "venus", color: "tan", parentId: "sun" },
+    { id: "neptune", color: "lightblue", parentId: "sun" },
+    { id: "moon", color: "gray", parentId: "earth" },
   ],
   links: [
-    { source: "about", target: "projects" },
-    { source: "about", target: "skills" },
-    { source: "about", target: "employment" },
-    { source: "about", target: "contact" },
-    { source: "about", target: "education" },
-    { source: "about", target: "secret" },
-    { source: "contact", target: "resume" },
+    { source: "sun", target: "jupiter" },
+    { source: "sun", target: "mars" },
+    { source: "sun", target: "earth" },
+    { source: "sun", target: "saturn" },
+    { source: "sun", target: "venus" },
+    { source: "sun", target: "neptune" },
+    { source: "earth", target: "moon" },
   ],
 };
 
@@ -131,7 +88,7 @@ const Graph = () => {
         const material = new THREE.MeshBasicMaterial({
           map: starfield,
           side: THREE.BackSide,
-          color: 0x555555,
+          color: 0x888888,
         });
         const skybox = new THREE.Mesh(geometry, material);
         scene.add(skybox);
@@ -183,19 +140,19 @@ const Graph = () => {
   }, []);
 
   const getNodeMaterial = (node) => {
-    const texture = textures[node.type];
+    const texture = textures[node.id];
     return texture
       ? new THREE.MeshStandardMaterial({ map: texture })
       : new THREE.MeshStandardMaterial({ color: node.color });
   };
 
   const createNodeMesh = (node) => {
-    const size = node.type === "sun" ? 14 : node.type === "moon" ? 6 : 10;
+    const size = node.id === "sun" ? 14 : node.id === "moon" ? 6 : 10;
     const geometry = new THREE.SphereGeometry(size, 32, 32);
     const material = getNodeMaterial(node);
     const mesh = new THREE.Mesh(geometry, material);
 
-    if (node.type === "earth" && textures.earthClouds) {
+    if (node.id === "earth" && textures.earthClouds) {
       const cloudGeometry = new THREE.SphereGeometry(size * 1.01, 32, 32);
       const cloudMaterial = new THREE.MeshStandardMaterial({
         map: textures.earthClouds,
@@ -206,7 +163,7 @@ const Graph = () => {
       mesh.add(cloudMesh);
     }
 
-    if (node.type === "venus" && textures.venus_athmosphere) {
+    if (node.id === "venus" && textures.venus_athmosphere) {
       const cloudGeometry = new THREE.SphereGeometry(size * 1.01, 32, 32);
       const cloudMaterial = new THREE.MeshStandardMaterial({
         map: textures.venus_athmosphere,
@@ -217,7 +174,7 @@ const Graph = () => {
       mesh.add(cloudMesh);
     }
 
-    if (node.type === "saturn" && textures.saturnRing) {
+    if (node.id === "saturn" && textures.saturnRing) {
       const ringGeo = new THREE.RingGeometry(size * 1.4, size * 2.2, 64);
       const ringMat = new THREE.MeshBasicMaterial({
         map: textures.saturnRing,
@@ -229,20 +186,7 @@ const Graph = () => {
       mesh.add(ringMesh);
     }
 
-    const sprite = new SpriteText(node.label);
-    sprite.fontFace = "Orbitron, sans-serif";
-    sprite.textHeight = node.type === "sun" ? 15 : 5;
-    sprite.color = node.color;
-    sprite.backgroundColor = "rgba(0, 0, 0, 0.6)";
-    sprite.borderColor = node.color;
-    sprite.borderWidth = 1;
-    sprite.padding = 2;
-    sprite.position.set(0, size + (node.type === "sun" ? 15 : 8), 0);
-
-    mesh.add(sprite);
-
     nodeMeshes.current[node.id] = mesh;
-
     return mesh;
   };
 
