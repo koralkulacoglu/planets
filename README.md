@@ -1,70 +1,49 @@
-# Getting Started with Create React App
+# Planets
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Getting Started
 
-## Available Scripts
+To run the project locally:
 
-In the project directory, you can run:
+```bash
+npm install
+npm start
+```
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+This project visualizes a 3D representation of a solar system using `react-force-graph-3d` and `three.js`. It includes the following features:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **3D Force Graph**: Displays nodes and links representing celestial bodies and their relationships.
+- **Custom Textures**: Applies realistic textures to planets, the moon, and the sun.
+- **Interactive Camera**: Automatically orbits the scene and allows zooming and panning.
+- **Node Interaction**: Clicking on a node zooms into it for a closer view.
+- **Dynamic Elements**: Includes rotating planets, cloud layers for Earth and Venus, and Saturn's ring.
+- **Background Skybox**: A starfield texture creates an immersive space environment.
 
-### `npm test`
+## Textures
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The following textures are used in the project and are located in the `public/textures/` directory:
 
-### `npm run build`
+- `sun.jpg`
+- `jupiter.jpg`
+- `earth.jpg`
+- `mars.jpg`
+- `saturn.jpg`
+- `venus.jpg`
+- `neptune.jpg`
+- `moon.jpg`
+- `starfield.jpg`
+- `earth_clouds.jpg`
+- `venus_athmosphere.jpg`
+- `saturn_ring.png`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## How It Works
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- **Node Creation**: Each celestial body is represented as a node with a unique texture and size.
+- **Links**: Links define the parent-child relationships between celestial bodies.
+- **Camera Animation**: The camera orbits the scene unless user interaction is detected.
+- **Custom Meshes**: Nodes are rendered as 3D meshes with textures and additional features like rings and cloud layers.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```
